@@ -2,18 +2,13 @@
 
 SET SERVEROUTPUT ON;
 
- -- Q1
-CREATE OR REPLACE PROCEDURE ajoutConcert (pIdConcert Concert.idConcert%TYPE,
-                            pNomConcert Concert.nomConcert%TYPE,
-                            pLieuConcert Concert.lieuConcert%TYPE,
-                            pDateConcert Concert.dateConcert%TYPE,
-                            pNomArtiste Artiste.nomArtiste%TYPE,
-                            pPrenomArtiste Artiste.prenomArtiste%TYPE) AS
-vNbConcert NUMBER:=0;
+-- Q1
+
+CREATE OR REPLACE PROCEDURE ajoutConcert (pIdConcert Concert.idConcert%TYPE, pNomConcert Concert.nomConcert%TYPE, pLieuConcert Concert.lieuConcert%TYPE, pDateConcert Concert.dateConcert%TYPE, pNomArtiste Artiste.nomArtiste%TYPE, pPrenomArtiste Artiste.prenomArtiste%TYPE) AS vNbConcert NUMBER:=0;
+
 vIdArtiste Artiste.idArtiste%TYPE;
 
 BEGIN
-
 SELECT count(*) INTO vNbConcert
 FROM Concert;
 
@@ -35,29 +30,24 @@ VALUES (pIdConcert,
         pDateConcert);
 
 
-FOR c1_ligne IN (
-SELECT *
-FROM Artiste,
-     Interpreter,
-     Piste,
-     Album
-WHERE Artiste.idArtiste = vIdArtiste
-  AND Interpreter.idArtiste = Artiste.idArtiste
-  AND Interpreter.idPiste = Piste.idPiste
-  AND Piste.idAlbum = Album.idAlbum
-  AND ANNEEALBUM < pDateConcert;
+FOR c1_ligne IN
+  ( SELECT Chanson.idChanson
+   FROM Artiste,
+        Interpreter,
+        Piste,
+        Album,
+        Chanson
+   WHERE Artiste.idArtiste = vIdArtiste
+     AND Interpreter.idArtiste = Artiste.idArtiste
+     AND Interpreter.idPiste = Piste.idPiste
+     AND Piste.idAlbum = Album.idAlbum
+     AND chanson.idChanson = piste.idChanson
+     AND anneeAlbum < to_number(to_char(to_date(pDateConcert),'YYYY')) ) LOOP
+INSERT INTO InterpreterEnConcert
+VALUES (pIdConcert,
+        c1_ligne.idChanson,
+        vIdArtiste);
 
-) LOOP END LOOP;
--- récupèrer l'année d'une date: to_number(to_char(to_date(‘JJ/MM/YYYY’),’YYYY’))
+END LOOP;
 
-END; /
-
-
-SELECT *
-FROM Artiste, Interpreter, Piste, Album
-WHERE Artiste.idArtiste = 1
-AND Interpreter.idArtiste = Artiste.idArtiste
-AND Interpreter.idPiste = Piste.idPiste
-AND Piste.idAlbum = Album.idAlbum
-AND EXTRACT(YEAR FROM
-   TO_DATE('1998-03-07', 'DD-MON-RR')) < 2010;
+END;
