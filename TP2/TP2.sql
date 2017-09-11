@@ -50,4 +50,23 @@ VALUES (pIdConcert,
 
 END LOOP;
 
+
+END;
+
+-- Q2
+
+CREATE OR REPLACE FUNCTION dureeAlbum(ptitreAlbum ALBUM.titreAlbum%TYPE) RETURN number IS DureeTotal NUMBER:=0;
+
+BEGIN
+FOR c1_ligne IN
+  (SELECT duree
+   FROM Piste,
+        Album
+   WHERE Piste.idAlbum = Album.idAlbum
+     AND Album.titreAlbum LIKE ptitreAlbum) LOOP DureeTotal := DureeTotal + c1_ligne.duree;
+
+END LOOP;
+
+RETURN DureeTotal;
+
 END;
