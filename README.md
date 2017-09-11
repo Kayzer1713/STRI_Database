@@ -18,8 +18,10 @@ effectuant la même chose. Vous coderez trois versions différentes de la procé
 - en utilisant un curseur manuel
 - en utilisant un curseur semi-automatique
 - en utilisant un curseur automatique
+
 Attention, on n’utilisera un curseur que quand cela est nécessaire !
 Tester l’appel de cette procédure.
+
 Remarque : On rappelle l’intérêt de la procédure PL/SQL dans ce cas :
 - simplicité d’utilisation pour l’utilisateur : uniquement appel à la procédure, pas
 d’exécution de requêtes
