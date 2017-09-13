@@ -70,3 +70,38 @@ END LOOP;
 RETURN DureeTotal;
 
 END;
+
+-- Q3
+
+-- En utilisant la fonction de la question 2
+SELECT titreAlbum AS Titre,
+       dureeAlbum(titreAlbum) AS Durée
+FROM Album;
+-- Sans la fonction de la question 2
+SELECT titreAlbum AS Titre,
+       SUM(duree) AS Durée
+FROM Album A,
+     Piste P
+WHERE A.idAlbum = P.idAlbum
+GROUP BY titreAlbum;
+
+-- Q4
+
+CREATE OR REPLACE PROCEDURE MAJPiste (pIdPiste Piste.idPiste%TYPE, pNoPiste Piste.noPiste%TYPE) IS
+
+BEGIN
+SELECT titreAlbum AS "Titre album",
+       titreChanson AS "Titre chanson"
+FROM Album A,
+     Piste P,
+     Chanson C
+WHERE P.idPiste = pIdPiste
+  AND P.idAlbum = A.idAlbum
+  AND P.idChanson = C.idChanson;
+
+-- maj du numéro de la piste:
+
+  UPDATE Piste
+  SET noPiste = pNoPiste WHERE idPiste = pIdPiste;
+
+END;
